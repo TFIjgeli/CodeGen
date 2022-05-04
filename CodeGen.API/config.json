@@ -1,0 +1,9 @@
+{
+
+
+  //// Online
+  "connectionstrings": {
+    "server": "data source=199.91.69.173;initial catalog=CodeGen;user id=sa;password=c4sxtaupSysboVAjrHaR;"
+  }
+
+}

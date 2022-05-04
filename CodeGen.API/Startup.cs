@@ -44,7 +44,6 @@ namespace CodeGen.API
             services.AddMediatR(typeof(EntryPoint).Assembly);
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
-
             services.AddSingleton<IConnectionConfigurations, ConnectionsConfigurations>();
         }
 

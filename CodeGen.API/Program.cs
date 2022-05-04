@@ -18,9 +18,17 @@ namespace CodeGen.API
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration(SetUpConfiguration)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
+        private static void SetUpConfiguration(HostBuilderContext context, IConfigurationBuilder builder)
+        {
+            builder.Sources.Clear();
+            builder.AddJsonFile("config.json", false, true)
+                .AddEnvironmentVariables();
+        }
     }
 }
