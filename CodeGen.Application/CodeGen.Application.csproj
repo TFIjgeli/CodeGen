@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Folder Include="DatabaseEntity\Command\" />
+    <Folder Include="DynamicCrud\Command\" />
   </ItemGroup>
 
 </Project>

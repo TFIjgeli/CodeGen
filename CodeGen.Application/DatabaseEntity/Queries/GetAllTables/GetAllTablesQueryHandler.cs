@@ -27,9 +27,9 @@ namespace CodeGen.Application.DatabaseEntity.Queries.GetAllTables
 
             var sql = "SELECT TABLE_NAME FROM information_schema.tables; ";
 
-            var res = await _sqlConnection.QueryFirstOrDefaultAsync<List<GetAllTablesQueryDto>>(sql);
+            var res = await _sqlConnection.QueryAsync<GetAllTablesQueryDto>(sql);
 
-            return await Task.FromResult(Response.Success(res));
+            return await Task.FromResult(Response.Success(res.ToList()));
         }
     }
 }
