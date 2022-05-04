@@ -12,5 +12,12 @@ namespace CodeGen.Application.DatabaseEntity.Queries.GetTablesInfo
     {
         public string ConnectionString { get; set; }
         public string TableName { get; set; }
+
+        public GetTablesInfoQuery(string connectionString, string tableName)
+        {
+            ConnectionString = connectionString;
+            TableName = tableName;
+        }
+
     }
 }

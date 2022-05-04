@@ -17,5 +17,12 @@
             <param name="query"></param>
             <returns></returns>
         </member>
+        <member name="M:CodeGen.API.Controllers.DynamicTableController.Get(System.String)">
+            <summary>
+            Get 
+            </summary>
+            <param name="tableName"></param>
+            <returns></returns>
+        </member>
     </members>
 </doc>
