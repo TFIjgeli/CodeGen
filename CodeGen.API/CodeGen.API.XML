@@ -25,5 +25,13 @@
             <returns></returns>
         </member>
         <!-- Badly formed XML comment ignored for member "M:CodeGen.API.Controllers.DynamicTableController.Update(CodeGen.Application.DynamicCrud.Command.UpdateTable.UpdateTableCommand,System.String,System.Int32)" -->
+        <member name="M:CodeGen.API.Controllers.DynamicTableController.Delete(System.String,System.Int32)">
+            <summary>
+            Delete
+            </summary>
+            <param name="tableName"></param>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
     </members>
 </doc>

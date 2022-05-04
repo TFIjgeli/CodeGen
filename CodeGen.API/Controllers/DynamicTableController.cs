@@ -1,4 +1,5 @@
-﻿using CodeGen.Application.DynamicCrud.Command.UpdateTable;
+﻿using CodeGen.Application.DynamicCrud.Command.DeleteTable;
+using CodeGen.Application.DynamicCrud.Command.UpdateTable;
 using CodeGen.Application.DynamicCrud.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -45,11 +46,30 @@ namespace CodeGen.API.Controllers
         /// <returns></returns>
         [HttpPut]
         [Route("{tableName}/{id:int}")]
-        public async Task<ActionResult<object>> Update(UpdateTableCommand command, string tableName, int id)
+        public async Task<ActionResult<bool>> Update(UpdateTableCommand command, string tableName, int id)
         {
             command.Id = id;
             command.TableName = tableName;
             var response = await _mediator.Send(command);
+
+            if (response.Error)
+                return BadRequest(response.ModelStateError);
+
+            return Ok(response.Data);
+        }
+
+
+        /// <summary>
+        /// Delete
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("{tableName}/{id:int}")]
+        public async Task<ActionResult<bool>> Delete(string tableName, int id)
+        {
+            var response = await _mediator.Send(new DeleteTableCommand(id, tableName));
 
             if (response.Error)
                 return BadRequest(response.ModelStateError);
