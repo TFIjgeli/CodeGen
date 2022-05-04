@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace CodeGen.Application.DatabaseEntity.Queries.GetAllTablesQuery
 {
-    public record GetAllTablesQuery(string connectionString) : IRequest<Response<GetAllTablesQueryDto>>;
+    public record GetAllTablesQuery(string connectionString) : IRequest<Response<List<GetAllTablesQueryDto>>>;
 }

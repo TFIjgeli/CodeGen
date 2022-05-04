@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace CodeGen.Application.DatabaseEntity.Queries.GetAllTablesQuery
 {
-    public class GetAllTablesQueryHandler : IRequestHandler<GetAllTablesQuery, Response<GetAllTablesQueryDto>>
+    public class GetAllTablesQueryHandler : IRequestHandler<GetAllTablesQuery, Response<List<GetAllTablesQueryDto>>>
     {
         private readonly SqlConnection _sqlConnection;
 
@@ -21,13 +21,13 @@ namespace CodeGen.Application.DatabaseEntity.Queries.GetAllTablesQuery
             this._sqlConnection = new SqlConnection(connectionString.DbConnectionString());
         }
 
-        public async Task<Response<GetAllTablesQueryDto>> Handle(GetAllTablesQuery request, CancellationToken cancellationToken)
+        public async Task<Response<List<GetAllTablesQueryDto>>> Handle(GetAllTablesQuery request, CancellationToken cancellationToken)
         {
             var result = new GetAllTablesQueryDto();
 
             var sql = "SELECT TABLE_NAME FROM information_schema.tables; ";
 
-            var res = await _sqlConnection.QueryFirstOrDefaultAsync<GetAllTablesQueryDto>(sql);
+            var res = await _sqlConnection.QueryFirstOrDefaultAsync<List<GetAllTablesQueryDto>>(sql);
 
             return await Task.FromResult(Response.Success(res));
         }

@@ -13,7 +13,7 @@ namespace CodeGen.API.Configurations.Services
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Parentline API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Code Generator", Version = "v1" });
 
                 var security = new Dictionary<string, IEnumerable<string>>
                 {
