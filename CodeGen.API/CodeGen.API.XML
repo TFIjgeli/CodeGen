@@ -24,5 +24,6 @@
             <param name="tableName"></param>
             <returns></returns>
         </member>
+        <!-- Badly formed XML comment ignored for member "M:CodeGen.API.Controllers.DynamicTableController.Update(CodeGen.Application.DynamicCrud.Command.UpdateTable.UpdateTableCommand,System.String,System.Int32)" -->
     </members>
 </doc>
