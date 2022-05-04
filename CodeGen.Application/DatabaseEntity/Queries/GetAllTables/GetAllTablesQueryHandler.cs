@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CodeGen.Application.DatabaseEntity.Queries.GetAllTablesQuery
+namespace CodeGen.Application.DatabaseEntity.Queries.GetAllTables
 {
     public class GetAllTablesQueryHandler : IRequestHandler<GetAllTablesQuery, Response<List<GetAllTablesQueryDto>>>
     {

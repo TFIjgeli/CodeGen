@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CodeGen.Application.DatabaseEntity.Queries.GetAllTablesQuery
+namespace CodeGen.Application.DatabaseEntity.Queries.GetAllTables
 {
     public class GetAllTablesQueryDto
     {

@@ -4,10 +4,17 @@
         <name>CodeGen.API</name>
     </assembly>
     <members>
-        <member name="M:CodeGen.API.Controllers.DatabaseController.GetAllTables(CodeGen.Application.DatabaseEntity.Queries.GetAllTablesQuery.GetAllTablesQuery)">
+        <member name="M:CodeGen.API.Controllers.DatabaseController.GetAllTables(CodeGen.Application.DatabaseEntity.Queries.GetAllTables.GetAllTablesQuery)">
             <summary>
             Get All Tables Query
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CodeGen.API.Controllers.DatabaseController.GetTablesInfo(CodeGen.Application.DatabaseEntity.Queries.GetTablesInfo.GetTablesInfoQuery)">
+            <summary>
+            Get tables information
+            </summary>
+            <param name="query"></param>
             <returns></returns>
         </member>
     </members>
