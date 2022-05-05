@@ -22,14 +22,16 @@ namespace CodeGen.API.Controllers
 
         /// <summary>
         /// Get 
-        /// </summary>
+        /// </summary
         /// <param name="tableName"></param>
+        /// <param name="currentPage"></param>
+        /// <param name="pageSize"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("{tableName}")]
-        public async Task<ActionResult<object>> Get(string tableName)
+        public async Task<ActionResult<object>> Get(string tableName, int? currentPage, int? pageSize)
         {
-            var response = await _mediator.Send(new GetTableQuery(tableName));
+            var response = await _mediator.Send(new GetTableQuery(tableName, currentPage, pageSize));
 
             if (response.Error)
                 return BadRequest(response.ModelStateError);

@@ -8,14 +8,17 @@ using System.Threading.Tasks;
 
 namespace CodeGen.Application.DynamicCrud.Queries
 {
-    public class GetTableQuery : IRequest<Response<List<object>>>
+    public class GetTableQuery : IRequest<Response<Pagination<object>>>
     {
-        public GetTableQuery(string tableName)
+        public GetTableQuery(string tableName, int? currentPage = null, int? pageSize = null)
         {
             TableName = tableName;
+            CurrentPage = currentPage;
+            PageSize = pageSize;
         }
 
         public string TableName { get; set; }
-
+        public int? CurrentPage { get; set; }
+        public int? PageSize { get; set; }
     }
 }
