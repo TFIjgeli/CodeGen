@@ -34,7 +34,6 @@ namespace CodeGen.API.Controllers
         [Route("{tableName}")]
         public async Task<ActionResult<object>> Get(string tableName, int? currentPage, int? pageSize, [FromQuery]string filter)
         {
-            var s = JsonConvert.DeserializeObject<Dictionary<string, string>>(filter);
             var response = await _mediator.Send(new GetTableQuery(tableName, currentPage, pageSize));
 
             if (response.Error)
