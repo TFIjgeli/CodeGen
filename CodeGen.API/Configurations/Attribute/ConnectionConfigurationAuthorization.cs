@@ -35,7 +35,7 @@ namespace CodeGen.API.Configurations.Attribute
         {
             try
             {
-                request.Headers.TryGetValue("X-LMS-Key", out var tracevalue);
+                request.Headers.TryGetValue("X-Connection-Key", out var tracevalue);
                 if (string.IsNullOrEmpty(tracevalue))
                     return false;
 
