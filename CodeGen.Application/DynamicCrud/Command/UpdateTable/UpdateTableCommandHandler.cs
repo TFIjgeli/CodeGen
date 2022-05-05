@@ -26,21 +26,28 @@ namespace CodeGen.Application.DynamicCrud.Command.UpdateTable
 
         public async Task<Response<bool>> Handle(UpdateTableCommand request, CancellationToken cancellationToken)
         {
-            var storedProc = "UpdateField";
+            var query = $"UPDATE {request.TableName} SET {GetValues(request.ColumnValues)} WHERE id = {request.Id}";
 
-            foreach (var item in request.ColumnValues)
-            {
-                var results = await _connection.ExecuteAsync(storedProc,
-                                                           new
-                                                           {
-                                                               Id = request.Id,
-                                                               TableName = request.TableName,
-                                                               Field = item.Column,
-                                                               Value = item.Value,
-                                                           }, commandType: CommandType.StoredProcedure);
-            }
+            var results = await _connection.ExecuteAsync(query);
 
             return await Task.FromResult(Response.Success(true));
+        }
+
+
+        private string GetValues(List<ColumnValue> columnValues)
+        {
+            var res = string.Empty;
+            var count = 0;
+            foreach (var item in columnValues)
+            {
+                count++;
+                res = $"{res} {item.Column} = '{item.Value}'";
+
+                if (count != columnValues.Count)
+                    res = $"{res},";
+            }
+
+            return res;
         }
     }
 }
