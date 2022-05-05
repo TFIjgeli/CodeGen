@@ -17,7 +17,15 @@
             <param name="query"></param>
             <returns></returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:CodeGen.API.Controllers.DynamicTableController.Get(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})" -->
+        <!-- Badly formed XML comment ignored for member "M:CodeGen.API.Controllers.DynamicTableController.Get(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.String)" -->
+        <member name="M:CodeGen.API.Controllers.DynamicTableController.Get(System.String,System.Int32)">
+            <summary>
+            Get by Id
+            </summary>
+            <param name="tableName"></param>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
         <member name="M:CodeGen.API.Controllers.DynamicTableController.Create(CodeGen.Application.DynamicCrud.Command.CreateTable.CreateTableCommand,System.String)">
             <summary>
             Create 

@@ -10,5 +10,6 @@ namespace CodeGen.Application.DatabaseEntity.Queries.GetTablesInfo
     {
         public string Column_Name { get; set; }
         public string Data_Type { get; set; }
+        public string Length { get; set; }
     }
 }

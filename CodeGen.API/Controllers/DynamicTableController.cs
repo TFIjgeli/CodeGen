@@ -6,6 +6,8 @@ using CodeGen.Application.DynamicCrud.Queries.GetTableById;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CodeGen.API.Controllers
@@ -30,8 +32,9 @@ namespace CodeGen.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("{tableName}")]
-        public async Task<ActionResult<object>> Get(string tableName, int? currentPage, int? pageSize)
+        public async Task<ActionResult<object>> Get(string tableName, int? currentPage, int? pageSize, [FromQuery]string filter)
         {
+            var s = JsonConvert.DeserializeObject<Dictionary<string, string>>(filter);
             var response = await _mediator.Send(new GetTableQuery(tableName, currentPage, pageSize));
 
             if (response.Error)

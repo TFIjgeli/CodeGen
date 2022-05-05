@@ -26,7 +26,6 @@ namespace CodeGen.Application.DatabaseEntity.Queries.GetTablesInfo
 
         public async Task<Response<List<GetTablesInfoQueryDto>>> Handle(GetTablesInfoQuery request, CancellationToken cancellationToken)
         {
-            var sql = "SELECT COLUMN_NAME, DATA_TYPE FROM CodeGen.INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '@TableName';";
             var storedProc = "GetFieldProperties";
 
             var results = await _connection.QueryAsync<GetTablesInfoQueryDto>(storedProc,
