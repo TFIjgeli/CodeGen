@@ -1,4 +1,5 @@
-﻿using CodeGen.Application.DynamicCrud.Command.DeleteTable;
+﻿using CodeGen.Application.DynamicCrud.Command.CreateTable;
+using CodeGen.Application.DynamicCrud.Command.DeleteTable;
 using CodeGen.Application.DynamicCrud.Command.UpdateTable;
 using CodeGen.Application.DynamicCrud.Queries;
 using MediatR;
@@ -29,6 +30,26 @@ namespace CodeGen.API.Controllers
         public async Task<ActionResult<object>> Get(string tableName)
         {
             var response = await _mediator.Send(new GetTableQuery(tableName));
+
+            if (response.Error)
+                return BadRequest(response.ModelStateError);
+
+            return Ok(response.Data);
+        }
+
+
+        /// <summary>
+        /// Create 
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="tableName"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("{tableName}")]
+        public async Task<ActionResult<object>> Create(CreateTableCommand command, string tableName)
+        {
+            command.TableName = tableName;
+            var response = await _mediator.Send(command);
 
             if (response.Error)
                 return BadRequest(response.ModelStateError);
