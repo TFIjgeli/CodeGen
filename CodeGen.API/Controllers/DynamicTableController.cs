@@ -2,6 +2,7 @@
 using CodeGen.Application.DynamicCrud.Command.DeleteTable;
 using CodeGen.Application.DynamicCrud.Command.UpdateTable;
 using CodeGen.Application.DynamicCrud.Queries;
+using CodeGen.Application.DynamicCrud.Queries.GetTableById;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +33,25 @@ namespace CodeGen.API.Controllers
         public async Task<ActionResult<object>> Get(string tableName, int? currentPage, int? pageSize)
         {
             var response = await _mediator.Send(new GetTableQuery(tableName, currentPage, pageSize));
+
+            if (response.Error)
+                return BadRequest(response.ModelStateError);
+
+            return Ok(response.Data);
+        }
+
+
+        /// <summary>
+        /// Get by Id
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{tableName}/{id:int}")]
+        public async Task<ActionResult<object>> Get(string tableName, int id)
+        {
+            var response = await _mediator.Send(new GetTableByIdQuery(id, tableName));
 
             if (response.Error)
                 return BadRequest(response.ModelStateError);
