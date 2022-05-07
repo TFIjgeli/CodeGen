@@ -25,7 +25,7 @@ namespace CodeGen.Application.DynamicCrud.Command.DeleteTable
 
         public async Task<Response<bool>> Handle(DeleteTableCommand request, CancellationToken cancellationToken)
         {
-            var query = $"UPDATE {request.TableName} SET Deleted = 1 WHERE id = {request.Id}";
+            var query = $"UPDATE {request.TableName} SET DeletedFlag = 1 WHERE id = {request.Id}";
 
             var results = await _connection.ExecuteAsync(query,
                                                            new

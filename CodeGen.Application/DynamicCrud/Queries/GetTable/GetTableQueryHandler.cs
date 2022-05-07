@@ -35,7 +35,7 @@ namespace CodeGen.Application.DynamicCrud.Queries
         {
             var joins = this.JoinObject(request.JoinFilter, request.TableName);
             var query = $"SELECT * FROM {request.TableName} {joins.JoinTable}" +
-                        $" where ({request.TableName}.Deleted is null or {request.TableName}.Deleted = 0) {FilterObject(request.Filter)} {joins.WhereQuery}";
+                        $" where ({request.TableName}.DeletedFlag = 0) {FilterObject(request.Filter)} {joins.WhereQuery}";
 
             var list = await _connection.QueryAsync<object>(query);
             var result = this.GetPagination(list, request.CurrentPage, request.PageSize);
@@ -73,7 +73,7 @@ namespace CodeGen.Application.DynamicCrud.Queries
                     }
 
                     results.JoinTable = $"{results.JoinTable} {join} ";
-                    results.WhereQuery = $"{results.WhereQuery} {query} AND ({tables.TableName}.Deleted is null or {tables.TableName}.Deleted = 0)";
+                    results.WhereQuery = $"{results.WhereQuery} {query} AND ({tables.TableName}.DeletedFlag = 0)";
                 }
 
                 return results;
