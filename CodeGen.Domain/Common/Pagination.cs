@@ -19,7 +19,10 @@ namespace CodeGen.Domain.Common
         private int TotalItems { get; set; }
 
 
+        public Pagination()
+        {
 
+        }
         public Pagination(IEnumerable<TEntity> queriedList, int totalItems, int currentPage, int pageSize)
         {
             QueriedList = queriedList;
@@ -32,13 +35,14 @@ namespace CodeGen.Domain.Common
 
         public List<TEntity> List
         {
+            //get; set;
             get { return QueriedList.ToList(); }
         }
 
-        public IEnumerable<int> PageIndices
-        {
-            get { return TotalItems == 0 ? Enumerable.Empty<int>() : GetPageRange(); }
-        }
+        //public IEnumerable<int> PageIndices
+        //{
+        //    get { return TotalItems == 0 ? Enumerable.Empty<int>() : GetPageRange(); }
+        //}
         public string PageSummary
         {
             get { return TotalItems == 0 ? "No results found" : $"Showing {FirstShownEntry} to {LastShownEntry} of {TotalItems} {EntryLabel}"; }
@@ -66,40 +70,40 @@ namespace CodeGen.Domain.Common
 
 
 
-        private IEnumerable<int> GetPageRange()
-        {
-            List<int> range = new List<int>();
-            int maxRangeSize = 10;
+        //private IEnumerable<int> GetPageRange()
+        //{
+        //    List<int> range = new List<int>();
+        //    int maxRangeSize = 10;
 
-            // Start of List
-            if (CurrentPage <= (int)Math.Ceiling((decimal)maxRangeSize / 2) || PageCount < maxRangeSize)
-            {
-                for (int i = 1; i <= maxRangeSize; i++)
-                {
-                    range.Add(i);
-                    if (i == PageCount) break;
-                }
-            }
-            // End of List
-            else if (CurrentPage + (int)Math.Ceiling((decimal)maxRangeSize / 2) > PageCount)
-            {
-                for (int i = PageCount - maxRangeSize + 1; i <= PageCount; i++)
-                {
-                    range.Add(i);
-                }
-            }
-            // Middle of list
-            else
-            {
-                int startIndex = (int)Math.Floor((decimal)maxRangeSize / 2);
-                if (maxRangeSize % 2 == 0) startIndex--;
-                for (int i = CurrentPage - startIndex; i <= CurrentPage + (int)Math.Floor((decimal)maxRangeSize / 2); i++)
-                {
-                    range.Add(i);
-                }
-            }
+        //    // Start of List
+        //    if (CurrentPage <= (int)Math.Ceiling((decimal)maxRangeSize / 2) || PageCount < maxRangeSize)
+        //    {
+        //        for (int i = 1; i <= maxRangeSize; i++)
+        //        {
+        //            range.Add(i);
+        //            if (i == PageCount) break;
+        //        }
+        //    }
+        //    // End of List
+        //    else if (CurrentPage + (int)Math.Ceiling((decimal)maxRangeSize / 2) > PageCount)
+        //    {
+        //        for (int i = PageCount - maxRangeSize + 1; i <= PageCount; i++)
+        //        {
+        //            range.Add(i);
+        //        }
+        //    }
+        //    // Middle of list
+        //    else
+        //    {
+        //        int startIndex = (int)Math.Floor((decimal)maxRangeSize / 2);
+        //        if (maxRangeSize % 2 == 0) startIndex--;
+        //        for (int i = CurrentPage - startIndex; i <= CurrentPage + (int)Math.Floor((decimal)maxRangeSize / 2); i++)
+        //        {
+        //            range.Add(i);
+        //        }
+        //    }
 
-            return range.ToArray();
-        }
+        //    return range.ToArray();
+        //}
     }
 }

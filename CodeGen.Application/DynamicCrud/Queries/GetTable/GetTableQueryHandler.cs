@@ -34,11 +34,26 @@ namespace CodeGen.Application.DynamicCrud.Queries
         public async Task<Response<Pagination<object>>> Handle(GetTableQuery request, CancellationToken cancellationToken)
         {
             var joins = this.JoinObject(request.JoinFilter, request.TableName);
-            var query = $"SELECT * FROM {request.TableName} {joins.JoinTable}" +
+            var query = $"SELECT ROW_NUMBER() OVER (ORDER BY {request.TableName}ID) AS NUMBER, * FROM {request.TableName} {joins.JoinTable}" +
                         $" where ({request.TableName}.DeletedFlag = 0) {FilterObject(request.Filter)} {joins.WhereQuery}";
 
+            if (request.PageSize == null)
+            {
+                request.CurrentPage = 1;
+                request.PageSize = 20;
+            }
+            
+            query = $"SELECT * FROM ( {query} ) AS TBL WHERE NUMBER BETWEEN(({request.CurrentPage} - 1) * {request.PageSize} + 1) AND({request.PageSize} * {request.CurrentPage})";
+
+
             var list = await _connection.QueryAsync<object>(query);
-            var result = this.GetPagination(list, request.CurrentPage, request.PageSize);
+            var records = await _connection.QueryFirstOrDefaultAsync<int>($"SELECT COUNT(*) from {request.TableName}");
+            
+            var result = new Pagination<object>(list, records, request.CurrentPage.Value, request.PageSize.Value);
+            //result.List = list.ToList();
+
+
+            //var result = this.GetPagination(list, request.CurrentPage, request.PageSize);
 
             return await Task.FromResult(Response.Success(result));
         }
