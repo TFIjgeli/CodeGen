@@ -33,8 +33,12 @@ namespace CodeGen.Application.DynamicCrud.Queries
 
         public async Task<Response<Pagination<object>>> Handle(GetTableQuery request, CancellationToken cancellationToken)
         {
+            var primaryQuery = $" select C.COLUMN_NAME FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS T JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE C ON C.CONSTRAINT_NAME=T.CONSTRAINT_NAME WHERE " +
+                               $" C.TABLE_NAME = '{request.TableName}' and T.CONSTRAINT_TYPE = 'PRIMARY KEY'";
+            var primaryKey = await _connection.QueryFirstOrDefaultAsync<string>(primaryQuery);
+
             var joins = this.JoinObject(request.JoinFilter, request.TableName);
-            var query = $"SELECT ROW_NUMBER() OVER (ORDER BY {request.TableName}ID) AS NUMBER, * FROM {request.TableName} {joins.JoinTable}" +
+            var query = $"SELECT ROW_NUMBER() OVER (ORDER BY {primaryKey}) AS NUMBER, * FROM {request.TableName} {joins.JoinTable}" +
                         $" where ({request.TableName}.DeletedFlag = 0) {FilterObject(request.Filter)} {joins.WhereQuery}";
 
             if (request.PageSize == null)
