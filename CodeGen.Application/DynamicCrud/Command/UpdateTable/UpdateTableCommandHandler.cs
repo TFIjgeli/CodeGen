@@ -26,7 +26,11 @@ namespace CodeGen.Application.DynamicCrud.Command.UpdateTable
 
         public async Task<Response<bool>> Handle(UpdateTableCommand request, CancellationToken cancellationToken)
         {
-            var query = $"UPDATE {request.TableName} SET {GetValues(request.ColumnValues)} WHERE id = {request.Id}";
+            var primaryQuery = $" select C.COLUMN_NAME FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS T JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE C ON C.CONSTRAINT_NAME=T.CONSTRAINT_NAME WHERE " +
+                               $" C.TABLE_NAME = '{request.TableName}' and T.CONSTRAINT_TYPE = 'PRIMARY KEY'";
+            var primaryKey = await _connection.QueryFirstOrDefaultAsync<string>(primaryQuery);
+
+            var query = $"UPDATE {request.TableName} SET {GetValues(request.ColumnValues)} WHERE {primaryKey} = {request.Id}";
 
             var results = await _connection.ExecuteAsync(query);
 
