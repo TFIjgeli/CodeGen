@@ -33,13 +33,15 @@ namespace CodeGen.Application.DynamicCrud.Queries
 
         public async Task<Response<Pagination<object>>> Handle(GetTableQuery request, CancellationToken cancellationToken)
         {
+            // Get primary key
             var primaryQuery = $" select C.COLUMN_NAME FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS T JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE C ON C.CONSTRAINT_NAME=T.CONSTRAINT_NAME WHERE " +
                                $" C.TABLE_NAME = '{request.TableName}' and T.CONSTRAINT_TYPE = 'PRIMARY KEY'";
             var primaryKey = await _connection.QueryFirstOrDefaultAsync<string>(primaryQuery);
 
+            // Construct query
             var joins = this.JoinObject(request.JoinFilter, request.TableName);
             var query = $"SELECT ROW_NUMBER() OVER (ORDER BY {primaryKey}) AS NUMBER, * FROM {request.TableName} {joins.JoinTable}" +
-                        $" where ({request.TableName}.DeletedFlag = 0) {FilterObject(request.Filter)} {joins.WhereQuery}";
+                        $" where ({request.TableName}.DeletedFlag = 0) {SearchObject(request.SearchQuery)} {joins.WhereQuery}";
 
             if (request.PageSize == null)
             {
@@ -49,16 +51,11 @@ namespace CodeGen.Application.DynamicCrud.Queries
             
             query = $"SELECT * FROM ( {query} ) AS TBL WHERE NUMBER BETWEEN(({request.CurrentPage} - 1) * {request.PageSize} + 1) AND({request.PageSize} * {request.CurrentPage})";
 
-
+            // Connect to database
             var list = await _connection.QueryAsync<object>(query);
             var records = await _connection.QueryFirstOrDefaultAsync<int>($"SELECT COUNT(*) from {request.TableName}");
             
             var result = new Pagination<object>(list, records, request.CurrentPage.Value, request.PageSize.Value);
-            //result.List = list.ToList();
-
-
-            //var result = this.GetPagination(list, request.CurrentPage, request.PageSize);
-
             return await Task.FromResult(Response.Success(result));
         }
 
@@ -88,11 +85,11 @@ namespace CodeGen.Application.DynamicCrud.Queries
 
                     foreach (var item in tables.ColumnValues)
                     {
-                        query = $"{query} AND {tables.TableName}.{item.Column} = '{item.Value}'";
+                        query = $"{query} OR {tables.TableName}.{item.Column} = '{item.Value}'";
                     }
 
                     results.JoinTable = $"{results.JoinTable} {join} ";
-                    results.WhereQuery = $"{results.WhereQuery} {query} AND ({tables.TableName}.DeletedFlag = 0)";
+                    results.WhereQuery = $" AND ({results.WhereQuery} {query}) AND ({tables.TableName}.DeletedFlag = 0)";
                 }
 
                 return results;
@@ -107,22 +104,22 @@ namespace CodeGen.Application.DynamicCrud.Queries
             }
         }
 
-        private string FilterObject(string filter)
+        private string SearchObject(string search)
         {
             try
             {
                 var query = string.Empty;
 
-                if (filter == null)
+                if (search == null)
                     return string.Empty;
 
-                var filters = JsonConvert.DeserializeObject<List<ColumnValue>>(filter);
+                var filters = JsonConvert.DeserializeObject<List<ColumnValue>>(search);
                 foreach (var item in filters)
                 {
-                    query = $"{query} AND {item.Column} = '{item.Value}'";
+                    query = $"{query} AND {item.Column} LIKE '%{item.Value}%'";
                 }
 
-                return query;
+                return $"({query})";
             }
             catch (Exception)
             {
