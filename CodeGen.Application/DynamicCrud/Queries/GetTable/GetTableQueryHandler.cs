@@ -40,7 +40,7 @@ namespace CodeGen.Application.DynamicCrud.Queries
 
             // Construct query
             var query = $"SELECT ROW_NUMBER() OVER (ORDER BY {primaryKey}) AS NUMBER, * FROM {request.TableName} {JoinObject(request.JoinQuery)}" +
-                        $" where ({request.TableName}.DeletedFlag = 0) {SearchObject(request.SearchQuery)} {FilterObject(request.FilterQuery)} ";
+                        $" where ({request.TableName}.DeletedFlag = 0) {FilterObject(request.FilterQuery)} {SearchObject(request.SearchQuery)} ";
 
             if (request.PageSize == null)
             {
@@ -100,7 +100,7 @@ namespace CodeGen.Application.DynamicCrud.Queries
                     results = $"{results} AND {item.Column} LIKE '%{item.Value}%'";
                 }
 
-                return $"({results})";
+                return $"{results}";
             }
             catch (Exception)
             {
@@ -118,13 +118,18 @@ namespace CodeGen.Application.DynamicCrud.Queries
                     return results;
 
                 var filters = JsonConvert.DeserializeObject<List<ColumnValue>>(filter);
-
+                
+                var count = 0;
                 foreach (var item in filters)
                 {
-                    results = $"{results} OR {item.Column} = '{item.Value}'";
+                    results = $"{results} {item.Column} = '{item.Value}'";
+
+                    count++;
+                    if (count != filter.Count())
+                        results = $"{results} OR ";
                 }
 
-                return $"({results})";
+                return $" AND ({results})";
             }
             catch (Exception)
             {
