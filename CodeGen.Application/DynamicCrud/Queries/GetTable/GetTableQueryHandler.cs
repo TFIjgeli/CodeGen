@@ -125,7 +125,7 @@ namespace CodeGen.Application.DynamicCrud.Queries
                     results = $"{results} {item.Column} = '{item.Value}'";
 
                     count++;
-                    if (count != filter.Count())
+                    if (count != filters.Count())
                         results = $"{results} OR ";
                 }
 
