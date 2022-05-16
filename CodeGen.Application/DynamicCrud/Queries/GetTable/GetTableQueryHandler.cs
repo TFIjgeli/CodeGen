@@ -68,7 +68,7 @@ namespace CodeGen.Application.DynamicCrud.Queries
             {
                 var results = string.Empty;
 
-                if (string.IsNullOrEmpty(joinFilter))
+                if (string.IsNullOrEmpty(joinFilter) || joinFilter == "[]")
                     return results;
 
                 var filters = JsonConvert.DeserializeObject<List<JoinTableVM>>(joinFilter);
@@ -91,7 +91,7 @@ namespace CodeGen.Application.DynamicCrud.Queries
             {
                 var results = string.Empty;
 
-                if (string.IsNullOrEmpty(search))
+                if (string.IsNullOrEmpty(search) || search == "[]")
                     return results;
 
                 var filters = JsonConvert.DeserializeObject<List<ColumnValue>>(search);
@@ -114,7 +114,7 @@ namespace CodeGen.Application.DynamicCrud.Queries
             {
                 var results = string.Empty;
 
-                if (string.IsNullOrEmpty(filter))
+                if (string.IsNullOrEmpty(filter) || filter == "[]")
                     return results;
 
                 var filters = JsonConvert.DeserializeObject<List<ColumnValue>>(filter);
