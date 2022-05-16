@@ -39,22 +39,21 @@ namespace CodeGen.Application.DynamicCrud.Queries
             var primaryKey = await _connection.QueryFirstOrDefaultAsync<string>(primaryQuery);
 
             // Construct query
-            var joins = this.JoinObject(request.JoinFilter, request.TableName);
-            var query = $"SELECT ROW_NUMBER() OVER (ORDER BY {primaryKey}) AS NUMBER, * FROM {request.TableName} {joins.JoinTable}" +
-                        $" where ({request.TableName}.DeletedFlag = 0) {SearchObject(request.SearchQuery)} {joins.WhereQuery}";
+            var query = $"SELECT ROW_NUMBER() OVER (ORDER BY {primaryKey}) AS NUMBER, * FROM {request.TableName} {JoinObject(request.JoinQuery)}" +
+                        $" where ({request.TableName}.DeletedFlag = 0) {SearchObject(request.SearchQuery)} {FilterObject(request.FilterQuery)} ";
 
             if (request.PageSize == null)
             {
                 request.CurrentPage = 1;
                 request.PageSize = 20;
             }
-            
+
             query = $"SELECT * FROM ( {query} ) AS TBL WHERE NUMBER BETWEEN(({request.CurrentPage} - 1) * {request.PageSize} + 1) AND({request.PageSize} * {request.CurrentPage})";
 
             // Connect to database
             var list = await _connection.QueryAsync<object>(query);
             var records = await _connection.QueryFirstOrDefaultAsync<int>($"SELECT COUNT(*) from {request.TableName}");
-            
+
             var result = new Pagination<object>(list, records, request.CurrentPage.Value, request.PageSize.Value);
             return await Task.FromResult(Response.Success(result));
         }
@@ -63,44 +62,26 @@ namespace CodeGen.Application.DynamicCrud.Queries
 
 
 
-        private JoinQueryStringVM JoinObject(string joinFilter, string primaryTable)
+        private string JoinObject(string joinFilter)
         {
             try
             {
-                var results = new JoinQueryStringVM();
-                var query = string.Empty;
-                var join = string.Empty;
+                var results = string.Empty;
 
-                if (joinFilter == null)
-                    return new JoinQueryStringVM()
-                    {
-                        JoinTable = string.Empty,
-                        WhereQuery = string.Empty
-                    };
+                if (string.IsNullOrEmpty(joinFilter))
+                    return results;
 
                 var filters = JsonConvert.DeserializeObject<List<JoinTableVM>>(joinFilter);
                 foreach (var tables in filters)
                 {
-                    join = $" {join} LEFT JOIN {tables.TableName} ON {primaryTable}.{tables.PrimaryTableKey} = {tables.TableName}.{tables.ForeignTableKey} ";
-
-                    foreach (var item in tables.ColumnValues)
-                    {
-                        query = $"{query} OR {tables.TableName}.{item.Column} = '{item.Value}'";
-                    }
-
-                    results.JoinTable = $"{results.JoinTable} {join} ";
-                    results.WhereQuery = $" AND ({results.WhereQuery} {query}) AND ({tables.TableName}.DeletedFlag = 0)";
+                    results = $" {results} LEFT JOIN {tables.ForeignTableName} ON {tables.PrimaryTableName}.{tables.PrimaryTableKey} = {tables.ForeignTableName}.{tables.ForeignTableKey} ";
                 }
 
                 return results;
             }
             catch (Exception)
             {
-                return new JoinQueryStringVM()
-                {
-                    JoinTable = string.Empty,
-                    WhereQuery = string.Empty
-                };
+                return string.Empty;
             }
         }
 
@@ -108,18 +89,42 @@ namespace CodeGen.Application.DynamicCrud.Queries
         {
             try
             {
-                var query = string.Empty;
+                var results = string.Empty;
 
-                if (search == null)
-                    return string.Empty;
+                if (string.IsNullOrEmpty(search))
+                    return results;
 
                 var filters = JsonConvert.DeserializeObject<List<ColumnValue>>(search);
                 foreach (var item in filters)
                 {
-                    query = $"{query} AND {item.Column} LIKE '%{item.Value}%'";
+                    results = $"{results} AND {item.Column} LIKE '%{item.Value}%'";
                 }
 
-                return $"({query})";
+                return $"({results})";
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
+        public string FilterObject(string filter)
+        {
+            try
+            {
+                var results = string.Empty;
+
+                if (string.IsNullOrEmpty(filter))
+                    return results;
+
+                var filters = JsonConvert.DeserializeObject<List<ColumnValue>>(filter);
+
+                foreach (var item in filters)
+                {
+                    results = $"{results} OR {item.Column} = '{item.Value}'";
+                }
+
+                return $"({results})";
             }
             catch (Exception)
             {

@@ -9,6 +9,6 @@ namespace CodeGen.Application.DynamicCrud.Queries.GetTable
     public class JoinQueryStringVM
     {
         public string JoinTable { get; set; }
-        public string WhereQuery { get; set; }
+        //public string WhereQuery { get; set; }
     }
 }

@@ -9,9 +9,10 @@ namespace CodeGen.Application.DynamicCrud.Queries.GetTable
 {
     public class JoinTableVM
     {
-        public string TableName { get; set; }
-        public string ForeignTableKey { get; set; }
+        public string PrimaryTableName { get; set; }
         public string PrimaryTableKey { get; set; }
-        public List<ColumnValue> ColumnValues { get; set; }
+
+        public string ForeignTableName { get; set; }
+        public string ForeignTableKey { get; set; }
     }
 }

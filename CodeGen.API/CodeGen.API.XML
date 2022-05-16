@@ -17,7 +17,7 @@
             <param name="query"></param>
             <returns></returns>
         </member>
-        <member name="M:CodeGen.API.Controllers.DynamicTableController.Get(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.String,System.String)">
+        <member name="M:CodeGen.API.Controllers.DynamicTableController.Get(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.String,System.String,System.String)">
             <summary>
             Search
             </summary>
@@ -25,7 +25,8 @@
             <param name="currentPage"></param>
             <param name="pageSize"></param>
             <param name="searchQuery"></param>
-            <param name="joinFilter"></param>
+            <param name="joinQuery"></param>
+            <param name="filterQuery"></param>
             <returns></returns>
         </member>
         <member name="M:CodeGen.API.Controllers.DynamicTableController.Get(System.String,System.Int32)">
