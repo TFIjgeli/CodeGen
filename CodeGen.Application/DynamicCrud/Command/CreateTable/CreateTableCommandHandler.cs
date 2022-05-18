@@ -28,6 +28,10 @@ namespace CodeGen.Application.DynamicCrud.Command.CreateTable
 
         public async Task<Response<bool>> Handle(CreateTableCommand request, CancellationToken cancellationToken)
         {
+            request.ColumnValues = request.ColumnValues
+                                          .Where(r => !string.IsNullOrEmpty(r.Value))
+                                          .ToList();
+
             var query = $"INSERT INTO {request.TableName} ({this.GetColumn(request.ColumnValues)}, CreateBy) VALUES ({this.GetValues(request.ColumnValues)}, '')";
 
             //var storedProc = "UpdateField";

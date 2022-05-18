@@ -40,6 +40,9 @@ namespace CodeGen.Application.DynamicCrud.Command.UpdateTable
 
         private string GetValues(List<ColumnValue> columnValues)
         {
+            columnValues = columnValues.Where(c => !string.IsNullOrEmpty(c.Value))
+                                       .ToList();
+
             var res = string.Empty;
             var count = 0;
             foreach (var item in columnValues)
