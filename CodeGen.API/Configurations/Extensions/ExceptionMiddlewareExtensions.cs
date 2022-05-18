@@ -32,7 +32,7 @@ namespace CodeGen.API.Configurations.Extensions
                         await context.Response.WriteAsync(new ModelStateError
                         {
                             Title = "Error",
-                            ErrorMessage = "We've encountered some problems please contact the administrator."
+                            ErrorMessage = contextFeature.Error.ToString()
                         }
                         .ToString());
                     }

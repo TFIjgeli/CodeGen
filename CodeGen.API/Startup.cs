@@ -56,7 +56,7 @@ namespace CodeGen.API
             }
 
             app.ConfigureSwaggerHandler();
-            //app.ConfigureExceptionHandler();
+            app.ConfigureExceptionHandler();
             app.ConfigureCorsHandler();
 
             app.UseHttpsRedirection();
