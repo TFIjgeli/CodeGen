@@ -13,5 +13,6 @@ namespace CodeGen.Application.DatabaseEntity.Queries.GetTablesInfo
         public string Length { get; set; }
         public string Primary_Key { get; set; }
         public string Foreign_Key { get; set; }
+        public string Is_Nullable { get; set; }
     }
 }
