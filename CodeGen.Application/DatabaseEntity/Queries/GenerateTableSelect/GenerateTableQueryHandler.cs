@@ -126,7 +126,7 @@ namespace CodeGen.Application.DatabaseEntity.Queries.GenerateTableSelect
                 var count = 0;
                 foreach (var item in filters)
                 {
-                    results = $"{results} \n {item.TableName}.{item.Column} LIKE '%@{item.TableName}{item.Column}%' ";
+                    results = $"{results} \n {item.TableName}.{item.Column} LIKE '%@{item.TableName}{item.Column}Search%' ";
 
                     count++;
                     if (count != filters.Count())
@@ -155,7 +155,7 @@ namespace CodeGen.Application.DatabaseEntity.Queries.GenerateTableSelect
                 var count = 0;
                 foreach (var item in filters)
                 {
-                    results = $"{results} \n {item.TableName}.{item.Column} = @{item.TableName}{item.Column}";
+                    results = $"{results} \n {item.TableName}.{item.Column} = @{item.TableName}{item.Column}Filter";
 
                     count++;
                     if (count != filters.Count())
