@@ -15,4 +15,10 @@ namespace CodeGen.Application.DynamicCrud.Queries.GetTable
         public string ForeignTableName { get; set; }
         public string ForeignTableKey { get; set; }
     }
+
+    public class TableFields
+    {
+        public string TableName { get; set; }
+        public string Field { get; set; }
+    }
 }

@@ -17,6 +17,7 @@ namespace CodeGen.Application.DynamicCrud.Command.UpdateTable
 
     public class ColumnValue
     {
+        public string TableName { get; set; }
         public string Column { get; set; }
         public string Value { get; set; }
     }

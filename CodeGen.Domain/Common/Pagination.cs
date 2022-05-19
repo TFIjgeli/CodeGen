@@ -28,6 +28,7 @@ namespace CodeGen.Domain.Common
             QueriedList = queriedList;
             CurrentPage = currentPage;
             PageSize = pageSize;
+            //QueryCreated = queryCreated;
             TotalItems = totalItems;
         }
 

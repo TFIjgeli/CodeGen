@@ -32,12 +32,13 @@ namespace CodeGen.API.Controllers
         /// <param name="searchQuery"></param>
         /// <param name="joinQuery"></param>
         /// <param name="filterQuery"></param>
+        /// <param name="tableFields"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("{tableName}")]
-        public async Task<ActionResult<object>> Get(string tableName, int? currentPage, int? pageSize, [FromQuery]string searchQuery, [FromQuery]string joinQuery, [FromQuery]string filterQuery)
+        public async Task<ActionResult<object>> Get(string tableName, int? currentPage, int? pageSize, [FromQuery]string searchQuery, [FromQuery]string joinQuery, [FromQuery]string filterQuery, [FromQuery]string tableFields)
         {
-            var response = await _mediator.Send(new GetTableQuery(tableName, currentPage, pageSize, searchQuery, joinQuery, filterQuery));
+            var response = await _mediator.Send(new GetTableQuery(tableName, currentPage, pageSize, searchQuery, joinQuery, filterQuery, tableFields));
 
             if (response.Error)
                 return BadRequest(response.ModelStateError);

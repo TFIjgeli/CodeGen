@@ -10,7 +10,8 @@ namespace CodeGen.Application.DynamicCrud.Queries
 {
     public class GetTableQuery : IRequest<Response<Pagination<object>>>
     {
-        public GetTableQuery(string tableName, int? currentPage = null, int? pageSize = null, string searchQuery = "", string joinQuery = "", string filterQuery = "")
+        public GetTableQuery(string tableName, int? currentPage = null, int? pageSize = null, string searchQuery = "", string joinQuery = "", string filterQuery = ""
+            , string tableFields = "")
         {
             TableName = tableName;
             CurrentPage = currentPage;
@@ -18,9 +19,12 @@ namespace CodeGen.Application.DynamicCrud.Queries
             SearchQuery = searchQuery;
             JoinQuery = joinQuery;
             FilterQuery = filterQuery;
+            TableFields = tableFields;
         }
 
         public string TableName { get; set; }
+        public string TableFields { get; set; }
+
         public int? CurrentPage { get; set; }
         public int? PageSize { get; set; }
         public string SearchQuery { get; }

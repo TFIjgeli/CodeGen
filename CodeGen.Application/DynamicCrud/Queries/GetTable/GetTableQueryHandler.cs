@@ -39,7 +39,7 @@ namespace CodeGen.Application.DynamicCrud.Queries
             var primaryKey = await _connection.QueryFirstOrDefaultAsync<string>(primaryQuery);
 
             // Construct query
-            var query = $"SELECT ROW_NUMBER() OVER (ORDER BY {primaryKey}) AS NUMBER, * FROM {request.TableName} {JoinObject(request.JoinQuery)}" +
+            var query = $"SELECT ROW_NUMBER() OVER (ORDER BY {primaryKey}) AS NUMBER, {TableFields(request.TableFields)} FROM {request.TableName} {JoinObject(request.JoinQuery)}" +
                         $" where ({request.TableName}.DeletedFlag = 0) {FilterObject(request.FilterQuery)} {SearchObject(request.SearchQuery)} ";
 
             if (request.PageSize == null)
@@ -72,12 +72,42 @@ namespace CodeGen.Application.DynamicCrud.Queries
                     return results;
 
                 var filters = JsonConvert.DeserializeObject<List<JoinTableVM>>(joinFilter);
+                
                 foreach (var tables in filters)
                 {
                     results = $" {results} LEFT JOIN {tables.ForeignTableName} ON {tables.PrimaryTableName}.{tables.PrimaryTableKey} = {tables.ForeignTableName}.{tables.ForeignTableKey} ";
                 }
 
+
                 return results;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
+        private string TableFields(string tableFields)
+        {
+            try
+            {
+                var results = string.Empty;
+
+                if (string.IsNullOrEmpty(tableFields) || tableFields == "[]")
+                    return "* ";
+
+                var filters = JsonConvert.DeserializeObject<List<TableFields>>(tableFields);
+                var count = 0;
+                foreach (var item in filters)
+                {
+                    results = $"{results} {item.TableName}.{item.Field} ";
+
+                    count++;
+                    if (count != filters.Count())
+                        results = $"{results}, ";
+                }
+
+                return $"{results}";
             }
             catch (Exception)
             {
@@ -95,12 +125,18 @@ namespace CodeGen.Application.DynamicCrud.Queries
                     return results;
 
                 var filters = JsonConvert.DeserializeObject<List<ColumnValue>>(search);
+
+                var count = 0;
                 foreach (var item in filters)
                 {
-                    results = $"{results} AND {item.Column} LIKE '%{item.Value}%'";
+                    results = $"{results} {item.TableName}.{item.Column} LIKE '%{item.Value}%'";
+                    
+                    count++;
+                    if (count != filters.Count())
+                        results = $"{results} OR ";
                 }
 
-                return $"{results}";
+                return $"AND ({results})";
             }
             catch (Exception)
             {
@@ -122,7 +158,7 @@ namespace CodeGen.Application.DynamicCrud.Queries
                 var count = 0;
                 foreach (var item in filters)
                 {
-                    results = $"{results} {item.Column} = '{item.Value}'";
+                    results = $"{results} {item.TableName}.{item.Column} = '{item.Value}'";
 
                     count++;
                     if (count != filters.Count())
