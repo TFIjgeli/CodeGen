@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationFile>C:\Users\jlgeli\source\repos\TFIjgeli\CodeGen\CodeGen.API\CodeGen.API.XML</DocumentationFile>
+    <DocumentationFile>D:\DTC Project\CodeGen\TFIjgeli\CodeGen\CodeGen.API\CodeGen.API.XML</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

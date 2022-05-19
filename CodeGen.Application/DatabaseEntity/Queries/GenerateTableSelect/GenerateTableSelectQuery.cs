@@ -6,17 +6,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CodeGen.Application.DynamicCrud.Queries
+namespace CodeGen.Application.DatabaseEntity.Queries.GenerateTableSelect
 {
-    public class GetTableQuery : IRequest<Response<Pagination<object>>>
+    public class GenerateTableSelectQuery : IRequest<Response<string>>
     {
-        public GetTableQuery(string tableName, 
-                             int? currentPage = null, 
-                             int? pageSize = null, 
-                             string searchQuery = "", 
-                             string joinQuery = "", 
-                             string filterQuery = "", 
-                             string tableFields = "")
+        public GenerateTableSelectQuery(string tableName,
+                                       int? currentPage = null,
+                                       int? pageSize = null,
+                                       string searchQuery = "",
+                                       string joinQuery = "",
+                                       string filterQuery = "",
+                                       string tableFields = "")
         {
             TableName = tableName;
             CurrentPage = currentPage;

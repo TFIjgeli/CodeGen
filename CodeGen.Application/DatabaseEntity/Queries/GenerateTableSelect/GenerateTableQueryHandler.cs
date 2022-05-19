@@ -1,6 +1,4 @@
 ﻿using CodeGen.Application.Configurations.Interfaces;
-using CodeGen.Application.DatabaseEntity.Queries.GetTablesInfo;
-using CodeGen.Application.DynamicCrud.Command.CreateTable;
 using CodeGen.Application.DynamicCrud.Command.UpdateTable;
 using CodeGen.Application.DynamicCrud.Queries.GetTable;
 using CodeGen.Domain.Common;
@@ -9,29 +7,29 @@ using MediatR;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CodeGen.Application.DynamicCrud.Queries
+namespace CodeGen.Application.DatabaseEntity.Queries.GenerateTableSelect
 {
-    public class GetTableQueryHandler : IRequestHandler<GetTableQuery, Response<Pagination<object>>>
+    public class GenerateTableQueryHandler : IRequestHandler<GenerateTableSelectQuery, Response<string>>
     {
         private readonly IConnectionConfigurations _connectionString;
         private readonly IMediator _mediator;
         private readonly SqlConnection _connection;
 
-        public GetTableQueryHandler(IConnectionConfigurations connectionString, IMediator mediator)
+        public GenerateTableQueryHandler(IConnectionConfigurations connectionString, IMediator mediator)
         {
             this._connectionString = connectionString;
             this._mediator = mediator;
             _connection = new SqlConnection(connectionString.DbConnectionString());
         }
 
-        public async Task<Response<Pagination<object>>> Handle(GetTableQuery request, CancellationToken cancellationToken)
+
+        public async Task<Response<string>> Handle(GenerateTableSelectQuery request, CancellationToken cancellationToken)
         {
             // Get primary key
             var primaryQuery = $" select C.COLUMN_NAME FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS T JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE C ON C.CONSTRAINT_NAME=T.CONSTRAINT_NAME WHERE " +
@@ -39,7 +37,8 @@ namespace CodeGen.Application.DynamicCrud.Queries
             var primaryKey = await _connection.QueryFirstOrDefaultAsync<string>(primaryQuery);
 
             // Construct query
-            var query = $"SELECT ROW_NUMBER() OVER (ORDER BY {primaryKey}) AS NUMBER, {TableFields(request.TableFields)} FROM {request.TableName} {JoinObject(request.JoinQuery)}" +
+            var query = $" SELECT ROW_NUMBER() OVER (ORDER BY {primaryKey}) AS NUMBER, {TableFields(request.TableFields)} \n" +
+                        $" FROM {request.TableName} {JoinObject(request.JoinQuery)} \n" +
                         $" where ({request.TableName}.DeletedFlag = 0) {FilterObject(request.FilterQuery)} {SearchObject(request.SearchQuery)} ";
 
             if (request.PageSize == null)
@@ -48,17 +47,15 @@ namespace CodeGen.Application.DynamicCrud.Queries
                 request.PageSize = 20;
             }
 
-            query = $"SELECT * FROM ( {query} ) AS TBL WHERE NUMBER BETWEEN(({request.CurrentPage} - 1) * {request.PageSize} + 1) AND({request.PageSize} * {request.CurrentPage})";
+            query = $" SELECT * FROM \n" +
+                    $" ( \n" +
+                    $" {query} \n" +
+                    $" )\n" +
+                    $" AS TBL WHERE NUMBER BETWEEN(({request.CurrentPage} - 1) * {request.PageSize} + 1) AND({request.PageSize} * {request.CurrentPage})";
 
-            // Connect to database
-            var list = await _connection.QueryAsync<object>(query);
-            var records = await _connection.QueryFirstOrDefaultAsync<int>($"SELECT COUNT(*) from {request.TableName}");
-
-            var result = new Pagination<object>(list, records, request.CurrentPage.Value, request.PageSize.Value);
+            var result = this.ProcedureCreation(request.SearchQuery, request.FilterQuery, query);
             return await Task.FromResult(Response.Success(result));
         }
-
-
 
 
 
@@ -72,10 +69,10 @@ namespace CodeGen.Application.DynamicCrud.Queries
                     return results;
 
                 var filters = JsonConvert.DeserializeObject<List<JoinTableVM>>(joinFilter);
-                
+
                 foreach (var tables in filters)
                 {
-                    results = $" {results} LEFT JOIN {tables.ForeignTableName} ON {tables.PrimaryTableName}.{tables.PrimaryTableKey} = {tables.ForeignTableName}.{tables.ForeignTableKey} ";
+                    results = $" {results} LEFT JOIN {tables.ForeignTableName} ON {tables.PrimaryTableName}.{tables.PrimaryTableKey} = {tables.ForeignTableName}.{tables.ForeignTableKey} \n";
                 }
 
 
@@ -100,7 +97,7 @@ namespace CodeGen.Application.DynamicCrud.Queries
                 var count = 0;
                 foreach (var item in filters)
                 {
-                    results = $"{results} {item.TableName}.{item.Field} ";
+                    results = $"{results} \n {item.TableName}.{item.Field} ";
 
                     count++;
                     if (count != filters.Count())
@@ -121,16 +118,16 @@ namespace CodeGen.Application.DynamicCrud.Queries
             {
                 var results = string.Empty;
 
-                if (string.IsNullOrEmpty(search) || search == "[]")
-                    return results;
+                //if (string.IsNullOrEmpty(search) || search == "[]")
+                //    return results;
 
                 var filters = JsonConvert.DeserializeObject<List<ColumnValue>>(search);
 
                 var count = 0;
                 foreach (var item in filters)
                 {
-                    results = $"{results} {item.TableName}.{item.Column} LIKE '%{item.Value}%'";
-                    
+                    results = $"{results} \n {item.TableName}.{item.Column} LIKE '%@{item.TableName}{item.Column}%' ";
+
                     count++;
                     if (count != filters.Count())
                         results = $"{results} OR ";
@@ -150,15 +147,15 @@ namespace CodeGen.Application.DynamicCrud.Queries
             {
                 var results = string.Empty;
 
-                if (string.IsNullOrEmpty(filter) || filter == "[]")
-                    return results;
+                //if (string.IsNullOrEmpty(filter) || filter == "[]")
+                //    return results;
 
                 var filters = JsonConvert.DeserializeObject<List<ColumnValue>>(filter);
-                
+
                 var count = 0;
                 foreach (var item in filters)
                 {
-                    results = $"{results} {item.TableName}.{item.Column} = '{item.Value}'";
+                    results = $"{results} \n {item.TableName}.{item.Column} = @{item.TableName}{item.Column}";
 
                     count++;
                     if (count != filters.Count())
@@ -171,6 +168,38 @@ namespace CodeGen.Application.DynamicCrud.Queries
             {
                 return string.Empty;
             }
+        }
+
+
+        public string ProcedureCreation(string searchQuery, string filterQuery, string query)
+        {
+            var result = $"CREATE PROCEDURE PROCNAME";
+
+            if (!string.IsNullOrEmpty(searchQuery) && searchQuery != "[]")
+            {
+                var search = JsonConvert.DeserializeObject<List<ColumnValue>>(searchQuery);
+                foreach (var item in search)
+                {
+                    result = $"{result} \n @{item.TableName}{item.Column} varchar(max)";
+                }
+            }
+
+            if (!string.IsNullOrEmpty(filterQuery) && filterQuery != "[]")
+            {
+                var filters = JsonConvert.DeserializeObject<List<ColumnValue>>(filterQuery);
+                foreach (var item in filters)
+                {
+                    result = $"{result} \n @{item.TableName}{item.Column} varchar(max)";
+                }
+            }
+
+            return $"{result} \n" +
+                   $"AS \n" +
+                   $"BEGIN \n" +
+                   $"\n" +
+                   $"{query} \n" +
+                   $"\n" +
+                   $"END";
         }
     }
 }
