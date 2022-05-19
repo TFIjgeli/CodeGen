@@ -180,7 +180,7 @@ namespace CodeGen.Application.DatabaseEntity.Queries.GenerateTableSelect
                 var search = JsonConvert.DeserializeObject<List<ColumnValue>>(searchQuery);
                 foreach (var item in search)
                 {
-                    result = $"{result} \n @{item.TableName}{item.Column} varchar(max)";
+                    result = $"{result} \n @{item.TableName}{item.Column}Search varchar(max)";
                 }
             }
 
@@ -189,7 +189,7 @@ namespace CodeGen.Application.DatabaseEntity.Queries.GenerateTableSelect
                 var filters = JsonConvert.DeserializeObject<List<ColumnValue>>(filterQuery);
                 foreach (var item in filters)
                 {
-                    result = $"{result} \n @{item.TableName}{item.Column} varchar(max)";
+                    result = $"{result} \n @{item.TableName}{item.Column}Filter varchar(max)";
                 }
             }
 
