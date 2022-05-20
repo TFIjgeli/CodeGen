@@ -30,6 +30,14 @@
             <param name="tableFields"></param>
             <returns></returns>
         </member>
+        <member name="M:CodeGen.API.Controllers.DatabaseController.GenerateQuery(CodeGen.Application.DatabaseEntity.Queries.GenerateTableSelect.TableSelectPost,System.String)">
+            <summary>
+            Generate query
+            </summary>
+            <param name="query"></param>
+            <param name="tableName"></param>
+            <returns></returns>
+        </member>
         <member name="M:CodeGen.API.Controllers.DynamicTableController.Get(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.String,System.String,System.String,System.String)">
             <summary>
             Search
@@ -43,6 +51,7 @@
             <param name="tableFields"></param>
             <returns></returns>
         </member>
+        <!-- Badly formed XML comment ignored for member "M:CodeGen.API.Controllers.DynamicTableController.GenerateQuery(CodeGen.Application.DatabaseEntity.Queries.GenerateTableSelect.TableSelectPost,System.String)" -->
         <member name="M:CodeGen.API.Controllers.DynamicTableController.Get(System.String,System.Int32)">
             <summary>
             Get by Id

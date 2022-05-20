@@ -1,9 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationFile>D:\DTC Project\CodeGen\TFIjgeli\CodeGen\CodeGen.API\CodeGen.API.XML</DocumentationFile>
+    <DocumentationFile>C:\Users\jlgeli\source\repos\TFIjgeli\CodeGen\CodeGen.API\CodeGen.API.XML</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

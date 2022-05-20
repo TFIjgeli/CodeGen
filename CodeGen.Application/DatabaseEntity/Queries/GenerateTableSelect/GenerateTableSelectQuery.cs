@@ -1,4 +1,6 @@
-﻿using CodeGen.Domain.Common;
+﻿using CodeGen.Application.DynamicCrud.Command.UpdateTable;
+using CodeGen.Application.DynamicCrud.Queries.GetTable;
+using CodeGen.Domain.Common;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -32,8 +34,22 @@ namespace CodeGen.Application.DatabaseEntity.Queries.GenerateTableSelect
 
         public int? CurrentPage { get; set; }
         public int? PageSize { get; set; }
-        public string SearchQuery { get; }
+        public string SearchQuery { get; set; }
         public string FilterQuery { get; set; }
-        public string JoinQuery { get; }
+        public string JoinQuery { get; set; }
+    }
+
+
+    public class TableSelectPost
+    {
+        //public string TableName { get; set; }
+        public List<TableFields> TableFields { get; set; }
+        public List<ColumnValue> SearchQuery { get; set; }
+        public List<ColumnValue> FilterQuery { get; set; }
+        public List<JoinTableVM> JoinQuery { get; set; }
+
+
+        public int? CurrentPage { get; set; }
+        public int? PageSize { get; set; }
     }
 }

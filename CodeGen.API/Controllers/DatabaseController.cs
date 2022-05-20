@@ -4,6 +4,7 @@ using CodeGen.Application.DatabaseEntity.Queries.GetTablesInfo;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -72,6 +73,33 @@ namespace CodeGen.API.Controllers
         {
 
             var response = await _mediator.Send(new GenerateTableSelectQuery(tableName, currentPage, pageSize, searchQuery, joinQuery, filterQuery, tableFields));
+
+            if (response.Error)
+                return BadRequest(response.ModelStateError);
+
+            return Ok(response.Data);
+        }
+
+
+        /// <summary>
+        /// Generate query
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="tableName"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("{tableName}/query")]
+        public async Task<ActionResult<string>> GenerateQuery([FromBody]TableSelectPost query, [FromRoute]string tableName)
+        {
+            
+            var response = await _mediator.Send(new GenerateTableSelectQuery(tableName,
+                                                                             query.CurrentPage,
+                                                                             query.PageSize,
+                                                                             JsonConvert.SerializeObject(query.SearchQuery),
+                                                                             JsonConvert.SerializeObject(query.JoinQuery),
+                                                                             JsonConvert.SerializeObject(query.FilterQuery),
+                                                                             JsonConvert.SerializeObject(query.TableFields)
+                                                                             ));
 
             if (response.Error)
                 return BadRequest(response.ModelStateError);
