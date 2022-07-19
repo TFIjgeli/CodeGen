@@ -54,7 +54,8 @@ namespace CodeGen.Application.DatabaseEntity.Queries.GenerateTableSelect
                     $" AS TBL WHERE NUMBER BETWEEN(({request.CurrentPage} - 1) * {request.PageSize} + 1) AND({request.PageSize} * {request.CurrentPage})";
 
             var result = this.ProcedureCreation(request.SearchQuery, request.FilterQuery, query);
-            return await Task.FromResult(Response.Success(result));
+            var r = _connection.Execute(result);
+            return await Task.FromResult(Response.Success(r.ToString()));
         }
 
 

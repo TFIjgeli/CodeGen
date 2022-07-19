@@ -3,7 +3,8 @@
 
   //// Online
   "connectionstrings": {
-    "server": "data source=199.91.69.173;initial catalog=osiris_demo;user id=sa;password=c4sxtaupSysboVAjrHaR;"
+    //"server": "data source=199.91.69.173;initial catalog=osiris_demo;user id=sa;password=c4sxtaupSysboVAjrHaR;"
+    "server": "data source=HBSIOMEN17\\SQL2016;initial catalog=Parentline_2015;user id=sa;password=Password101;"
   }
 
 }

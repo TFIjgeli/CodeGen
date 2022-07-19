@@ -25,7 +25,7 @@ namespace CodeGen.Application.DatabaseEntity.Queries.GetAllTables
         {
             var result = new GetAllTablesQueryDto();
 
-            var sql = "SELECT TABLE_NAME FROM information_schema.tables; ";
+            var sql = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES; ";
 
             var res = await _sqlConnection.QueryAsync<GetAllTablesQueryDto>(sql);
 
